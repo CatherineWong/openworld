@@ -1,6 +1,7 @@
 import numpy as np
 
 MIN_BOX_SIZE = 0.1
+MIN_BOX_SPACING = 0.1
 
 # Utility functions for sampling distributions.
 def sample_categorical(rng, params):
@@ -83,6 +84,7 @@ class World(object):
                 
                 # Choose a spacing, then place the box.
                 box_spacing = sample_normal(rng, params=spacings)
+                if (box_spacing < MIN_BOX_SPACING): continue
                 free_shelves = [shelf for shelf in range(num_shelves_per_aisle) if remaining_shelf_space[shelf] >= (box_width + box_spacing)]
                 if len(free_shelves) < 1: continue
                 shelf = np.random.choice(free_shelves, 1)[0]
@@ -113,9 +115,12 @@ if __name__ == "__main__":
             aisle.boxes += [box]
         aisles += [aisle]
     
+    # Some toy world types.
+    
+    
     # Generate a random world.
     random_world = World(aisles=None)
-    random_world.initialize(num_aisles=3, aisle_size=12, num_shelves_per_aisle=3,
+    random_world.initialize(num_aisles=10, aisle_size=12, num_shelves_per_aisle=3,
                             box_sizes=[((1, 0.1), (1, 0.1)), ((3, 0.1), (3, 0.1))],
                             box_size_classes=[0.7, 0.3],
                             num_box_per_aisles=(2,1),
