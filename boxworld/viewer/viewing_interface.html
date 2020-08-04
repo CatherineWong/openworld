@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Boxworld Testing Interface</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="js/viewing_interface.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/viewing_interface.css">
+    
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap" rel="stylesheet">
+  </head>
+  <body>
+    <div id="modal_bg">
+            <div id="modal">
+                <div>Welcome to the Boxworld testing interface. <br /> Choose a task file to start.</div>
+                <br />
+                <input type="file" class="load_task"/>
+            </div>
+    </div>
+    
+    <div id="workspace">
+      
+      <div id="current_aisle_container">
+                <div class="text" id="current_aisle_header">Current Aisle</div>
+                <div class="text" id="aisle_counter">You are on aisle <span id="current_aisle_id_display">0</span>/<span id="total_aisle_count_display">0</span></div>
+                <div id="current_aisle_view">
+                </div>
+                
+                <div id="aisle_picker">
+                  <button onclick="showPreviousAisle()" id="previous_aisle_btn">Previous Aisle</button>
+                  <button onclick="showNextAisle()" id="next_aisle_btn">Next Aisle</button>
+                </div>
+      </div>
+      
+      <div id = "other_aisles_container">
+        <div id="other_aisles_header">
+          <div id="previous_header" style="float: left;"><-- Previous Aisles</div>
+          <div id="next_header" style="float: right;">Next Aisles --></div>
+        </div>
+        
+        <div id="other_aisles_view">
+          <div id='previous_aisles_preview' style="display: inline-block;"></div>
+          <div id='current_aisle_preview'  style="display: inline-block;"></div>
+          <div id='next_aisles_preview'  style="display: inline-block;"></div>
+          <div></div>
+        </div>
+      
+    </div>
+  </body>
+</html>

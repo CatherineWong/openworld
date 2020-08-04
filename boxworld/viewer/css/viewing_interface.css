@@ -1,0 +1,92 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+    min-width: 1410px;
+}
+
+.shelf {
+    border: 1px solid #555;
+    position: relative;
+    background-color: white;
+}
+
+.box {
+    width: 50px;
+    height: 50px;
+    border: 1px solid #555;
+    position: absolute;
+    bottom: 0px;
+    left: 0px;
+    background-color: brown;
+}
+
+
+#workspace {
+    width: 1410px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+#current_aisle_container {
+    width: 50%;
+    margin: auto;
+    background-color: #d5d5d5;
+}
+
+#current_aisle_view {
+  width: 50%;
+  margin: auto;
+}
+
+#aisle_picker{
+  width: 50%;
+  margin: auto;
+}
+
+#other_aisles_container {
+  width: 100%;
+  margin: auto;
+}
+#other_aisles_header {
+  width: 25%;
+  margin: auto;
+}
+
+#current_aisle_preview {
+  border: 1px solid blue;
+}
+
+.aisle_wrapper {
+  display: inline-block;
+  margin: 2px;
+}
+
+.text {
+    text-align: center;
+    background: white;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+
+#modal_bg {
+    background-color: black;
+    width: 100%;
+    min-height: 10000px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+}
+
+#modal {
+    margin: auto;
+    background-color: white;
+    text-align: center;
+    padding: 100px;
+    width: 500px;
+    margin-top: 100px;
+}
+
+#modal input {
+    margin-left: 70px;
+}
