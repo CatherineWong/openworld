@@ -3,8 +3,8 @@ var CURRENT_SCALING_CONSTANT = 25;
 var CURRENT_WORLD = undefined;
 var CURRENT_AISLE = undefined;
 
-var PREVIEW_SCALING_CONSTANT = 10;
-var NUM_TO_PREVIEW = 5;
+var PREVIEW_SCALING_CONSTANT = 6;
+var NUM_TO_PREVIEW = 6;
 
 function fillAisleViewWithData(jq_aisle, world, aisle, scaling_constant) {
   // Add shelves.
@@ -32,10 +32,19 @@ function fillAisleViewWithData(jq_aisle, world, aisle, scaling_constant) {
     jq_box.css('width', box_width + 'px');
     jq_box.css('left', box_spacing + 'px');
     
+    if (box.id === CURRENT_TASK.target) {
+      jq_box.css('background-color', 'sandybrown');
+    }
+    
     shelf_name = "shelf_" + aisle.id + "_" + box.pos[0] + "_" + scaling_constant
     jq_shelf = jq_aisle.find('#' + shelf_name);
     jq_box.appendTo(jq_shelf);
   }
+}
+
+function fillInstructionView() {
+  jq_instruction = $('#current_instruction');
+  jq_instruction.html(CURRENT_TASK.instruction);
 }
 
 function fillCurrentAisleView() {
@@ -113,10 +122,12 @@ function loadJSONTask(task) {
     console.log(task);
     
     // Load the current aisle.
+    CURRENT_TASK = task;
     CURRENT_WORLD = task.world;
-    CURRENT_AISLE = task.world.aisles[task.current_aisle];
+    CURRENT_AISLE = task.world.aisles[task.location];
     fillCurrentAisleView();
     fillPreviewView();
+    fillInstructionView();
 }
 
 function loadTaskFromFile(e) {
@@ -136,7 +147,7 @@ function loadTaskFromFile(e) {
             } else {
               task = {
                 "world" : contents,
-                "current_aisle" : 0,
+                "location" : 0,
                 "instruction" : "No instruction given."
               }
             }

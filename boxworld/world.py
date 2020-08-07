@@ -1,17 +1,9 @@
 import numpy as np
+from helpers import *
+from grammar import Meaning
 
 MIN_BOX_SIZE = 0.1
 MIN_BOX_SPACING = 0.1
-
-# Utility functions for sampling distributions.
-def sample_categorical(rng, params):
-    pvals = np.array(params)
-    pvals = pvals / np.sum(pvals)
-    draw_array = rng.multinomial(n=1, pvals=pvals)
-    return np.argmax(draw_array)
-
-def sample_normal(rng, params):
-    return rng.normal(loc=params[0], scale=params[1])
     
 class Box(object):
     def __init__(self, id, pos, width, height):
@@ -19,7 +11,6 @@ class Box(object):
         self.pos = pos # Pos is in (shelf_id, x_distance on shelf)
         self.width = width
         self.height = height
-        
     def to_representation(self):
         return {
             "id" : int(self.id),
@@ -28,12 +19,26 @@ class Box(object):
             "height" : float(self.height)
         }
         
+    @staticmethod
+    def initialize_random(id, pos, widths, heights):
+        rng = np.random.default_rng()
+        box_width = sample_normal(rng, widths)
+        box_height = sample_normal(rng, heights)
+        return Box(id, pos, box_width, box_height)
+        
 class Aisle(object):
     def __init__(self, id, size, num_shelves, boxes):
         self.id = id
         self.size = size
         self.num_shelves = num_shelves
-        self.boxes = boxes
+        self.boxes = self.set_boxes(boxes)
+    
+    def set_boxes(self, boxes):
+        shelf_height = self.size / self.num_shelves
+        for box in boxes:
+            box.width = clamp_min_max(box.width, min=MIN_BOX_SIZE, max=self.size - MIN_BOX_SIZE)
+            box.height = clamp_min_max(box.height, min=MIN_BOX_SIZE, max=shelf_height - MIN_BOX_SIZE)
+        return boxes
     
     def to_representation(self):
         return {
@@ -80,7 +85,8 @@ class World(object):
                 box_width = sample_normal(rng, params=box_sizes[box_size_class][0])
                 box_height = sample_normal(rng, params=box_sizes[box_size_class][1])
                 
-                if ((box_width < MIN_BOX_SIZE) or (box_height < MIN_BOX_SIZE)): continue
+                box_width = clamp_min_max(box_width, min=MIN_BOX_SIZE, max=aisle_size - MIN_BOX_SIZE)
+                box_height = clamp_min_max(box_height, min=MIN_BOX_SIZE, max=shelf_height - MIN_BOX_SIZE)
                 
                 # Choose a spacing, then place the box.
                 box_spacing = sample_normal(rng, params=spacings)
@@ -106,6 +112,23 @@ class World(object):
                 box_id += 1
         self.aisles = generated_aisles
 
+class Situation(object):
+    def __init__(self, world, location, instruction, target, meaning=None):
+        self.world = world
+        self.location = location
+        self.instruction = instruction
+        self.target = target
+        self.meaning = meaning if meaning is not None else Meaning.empty_meaning()
+    
+    def to_representation(self):
+        return {
+            "world" : self.world.to_representation(),
+            "location" : int(self.location),
+            "instruction" : str(self.instruction),
+            "target" : int(self.target),
+            "meaning" : self.meaning.to_representation()
+        }
+
 if __name__ == "__main__":
     aisles = []
     for aisle_id in range(2):
@@ -114,10 +137,6 @@ if __name__ == "__main__":
             box = Box(id=id, pos=(id, id+1), width=aisle_id+3, height=id + 0.5)
             aisle.boxes += [box]
         aisles += [aisle]
-    
-    # Some toy world types.
-    
-    
     # Generate a random world.
     random_world = World(aisles=None)
     random_world.initialize(num_aisles=10, aisle_size=12, num_shelves_per_aisle=3,
@@ -128,7 +147,15 @@ if __name__ == "__main__":
                             deterministic_aisles=aisles)
     print(random_world.to_representation())
     
-    # Write out a random world.
-    import json
-    with open("data/demo/world_example_1.js", "w") as f:
-        json.dump(random_world.to_representation(), f)
+    situation = Situation(world=random_world,
+                        location=0,
+                        instruction="the big box near the little box",
+                        target=10,
+                        meaning=None)
+    
+    print(situation.to_representation())
+    
+    # # Write out a random world.
+    # import json
+    # with open("data/demo/world_example_1.js", "w") as f:
+    #     json.dump(random_world.to_representation(), f)

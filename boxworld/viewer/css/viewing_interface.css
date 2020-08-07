@@ -68,6 +68,10 @@ body {
     margin-bottom: 5px;
 }
 
+#current_instruction {
+  font-style: italic;
+}
+
 #modal_bg {
     background-color: black;
     width: 100%;
