@@ -18,7 +18,7 @@ def build_default_situation(aisles, instruction):
     situation_name = "_".join(instruction.split())
     return situation_name, situation
 
-def generate_many_boxes(shelf_size, shelf_height, shelf_id, box_sizes, num_boxes, min_spacing, max_spacing, starting_spacing):
+def generate_many_boxes(shelf_size, shelf_height, shelf_id, box_sizes, num_boxes, min_spacing, max_spacing, starting_spacing,):
     boxes = []
     current_spacing = starting_spacing
     rng = np.random.default_rng()
@@ -189,6 +189,259 @@ def generate_demo(flags):
     problem_name = f"demo_{situation_name}_{situation_id}_2.json"
     situations.append((problem_name, situation))
     
+    # Small box near big boxes.
+    instruction = "a small box near big boxes"
+    big_sizes = [[shelf_height * 0.7, 0.1], [shelf_height * 0.8, 0.1]]
+    little_sizes = [[shelf_height * 0.4, 0.2], [shelf_height * 0.5, 0.2]]
+    aisles = []
+    for aisle_id in range(num_aisles):
+        boxes = []
+        if aisle_id == 0:
+            boxes += generate_many_boxes(aisle_size, shelf_height, 0, [big_sizes], num_boxes=1, min_spacing=0.5, max_spacing=1, starting_spacing=7)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 1, [little_sizes], num_boxes=3, min_spacing=0.7, max_spacing=1, starting_spacing=1)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 1, [big_sizes], num_boxes=1, min_spacing=0.7, max_spacing=1, starting_spacing=9)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [little_sizes], num_boxes=1, min_spacing=0.7, max_spacing=1, starting_spacing=11)
+        if aisle_id == 1:
+            boxes += generate_many_boxes(aisle_size, shelf_height, 0, [big_sizes], num_boxes=1, min_spacing=0.5, max_spacing=1, starting_spacing=7)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 1, [little_sizes], num_boxes=2, min_spacing=0.7, max_spacing=1, starting_spacing=1)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 1, [big_sizes], num_boxes=2, min_spacing=0.7, max_spacing=1, starting_spacing=8)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [little_sizes], num_boxes=1, min_spacing=0.7, max_spacing=1, starting_spacing=9)
+        if aisle_id == 2:
+            boxes += generate_many_boxes(aisle_size, shelf_height, 1, [little_sizes], num_boxes=1, min_spacing=0.7, max_spacing=1, starting_spacing=0.5)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 1, [big_sizes], num_boxes=2, min_spacing=0.7, max_spacing=1, starting_spacing=8)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 2, [big_sizes], num_boxes=1, min_spacing=0.7, max_spacing=1, starting_spacing=1)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [little_sizes], num_boxes=1, min_spacing=0.7, max_spacing=1, starting_spacing=10)
+        if aisle_id == 3:
+            boxes = [Box.initialize_random(id="target", pos=(1, 0.5), widths=little_sizes[0], heights=little_sizes[1])]
+            boxes += generate_many_boxes(aisle_size, shelf_height, 1, [big_sizes], num_boxes=3, min_spacing=0.7, max_spacing=1, starting_spacing=3)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [big_sizes], num_boxes=2, min_spacing=0.7, max_spacing=1, starting_spacing=8)
+        if aisle_id == 4:
+            boxes += generate_many_boxes(aisle_size, shelf_height, 0, [little_sizes], num_boxes=1, min_spacing=0.7, max_spacing=1, starting_spacing=0.2)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 1, [big_sizes], num_boxes=2, min_spacing=0.7, max_spacing=1, starting_spacing=8)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 1, [big_sizes], num_boxes=1, min_spacing=0.7, max_spacing=1, starting_spacing=1)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 2, [big_sizes], num_boxes=1, min_spacing=0.7, max_spacing=1, starting_spacing=4)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [big_sizes, little_sizes], num_boxes=2, min_spacing=0.7, max_spacing=1, starting_spacing=5)
+        if aisle_id == 5:
+            boxes += generate_many_boxes(aisle_size, shelf_height, 0, [little_sizes], num_boxes=1, min_spacing=0.7, max_spacing=1, starting_spacing=1)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 1, [big_sizes], num_boxes=2, min_spacing=0.7, max_spacing=1, starting_spacing=10)
+            boxes += generate_many_boxes(aisle_size, shelf_height,21, [big_sizes], num_boxes=1, min_spacing=0.7, max_spacing=1, starting_spacing=8)
+            boxes += [Box.initialize_random(id=None, pos=(3, 3), widths=little_sizes[0], heights=little_sizes[1]),
+            Box.initialize_random(id=None, pos=(3, 7), widths=little_sizes[0], heights=big_sizes[1]),
+            Box.initialize_random(id=None, pos=(3, 11), widths=little_sizes[0], heights=little_sizes[1]),]
+        
+        aisles.append(Aisle(id=aisle_id, size=aisle_size, num_shelves=num_shelves, boxes=boxes))
+    situation_name, situation = build_default_situation(aisles, instruction)
+    problem_name = f"demo_{situation_name}_{situation_id}_0.json"
+    situations.append((problem_name, situation))
+    
+    # Small box near big boxes.
+    instruction = "a small box near big boxes"
+    tall_sizes = [[shelf_height * 0.2, 0.2], [shelf_height * 0.8, 0.2]]
+    big_sizes = [[shelf_height * 0.6, 0.1], [shelf_height * 0.7, 0.1]]
+    little_sizes = [[shelf_height * 0.35, 0.2], [shelf_height * 0.4, 0.2]]
+    aisles = []
+    for aisle_id in range(num_aisles):
+        boxes = []
+        if aisle_id == 0:
+            boxes += generate_many_boxes(aisle_size, shelf_height, 0, [tall_sizes], num_boxes=1, min_spacing=0.5, max_spacing=1, starting_spacing=2)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 1, [big_sizes], num_boxes=2, min_spacing=1.5, max_spacing=2, starting_spacing=5)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [little_sizes], num_boxes=2, min_spacing=1.5, max_spacing=2, starting_spacing=7)
+        if aisle_id == 1:
+            boxes = [Box.initialize_random(id="target", pos=(0, 2), widths=little_sizes[0], heights=little_sizes[1])]
+            boxes += generate_many_boxes(aisle_size, shelf_height, 0, [big_sizes], num_boxes=2, min_spacing=1, max_spacing=1.2, starting_spacing=4)
+            boxes += [Box.initialize_random(id=None, pos=(2, 4), widths=little_sizes[0], heights=little_sizes[1])]
+            boxes += generate_many_boxes(aisle_size, shelf_height, 1, [tall_sizes], num_boxes=3, min_spacing=1, max_spacing=1.2, starting_spacing=6)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [little_sizes], num_boxes=2, min_spacing=1, max_spacing=1.5, starting_spacing=8)
+        if aisle_id == 2:
+            boxes = [Box.initialize_random(id=None, pos=(0, 0.5), widths=big_sizes[0], heights=big_sizes[1]),
+            Box.initialize_random(id=None, pos=(0, 5), widths=little_sizes[0], heights=little_sizes[1]),
+            Box.initialize_random(id=None, pos=(0, 7), widths=big_sizes[0], heights=big_sizes[1]),]
+            
+            boxes += generate_many_boxes(aisle_size, shelf_height, 2, [big_sizes, tall_sizes], num_boxes=4, min_spacing=0.7, max_spacing=1, starting_spacing=2)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [little_sizes], num_boxes=2, min_spacing=0.7, max_spacing=1, starting_spacing=5)
+        if aisle_id == 3:
+            boxes = [Box.initialize_random(id=None, pos=(0, 5), widths=little_sizes[0], heights=little_sizes[1]),]
+            
+            boxes += generate_many_boxes(aisle_size, shelf_height, 2, [big_sizes, tall_sizes], num_boxes=4, min_spacing=0.7, max_spacing=1, starting_spacing=3)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [little_sizes], num_boxes=1, min_spacing=0.7, max_spacing=1, starting_spacing=6)
+        if aisle_id == 4:
+            boxes = [Box.initialize_random(id=None, pos=(0, 6), widths=little_sizes[0], heights=little_sizes[1]),]
+            boxes = [Box.initialize_random(id=None, pos=(1, 6), widths=big_sizes[0], heights=big_sizes[1]),]
+            
+            boxes += generate_many_boxes(aisle_size, shelf_height, 2, [big_sizes, tall_sizes], num_boxes=4, min_spacing=0.7, max_spacing=1, starting_spacing=2)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [little_sizes], num_boxes=3, min_spacing=0.7, max_spacing=1, starting_spacing=2)
+        if aisle_id == 5:
+            boxes = [Box.initialize_random(id=None, pos=(0, 2), widths=little_sizes[0], heights=little_sizes[1]),]
+            boxes = [Box.initialize_random(id=None, pos=(0, 8), widths=big_sizes[0], heights=big_sizes[1]),]
+            
+            boxes += generate_many_boxes(aisle_size, shelf_height, 2, [big_sizes, tall_sizes], num_boxes=4, min_spacing=0.7, max_spacing=1, starting_spacing=2)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [little_sizes], num_boxes=3, min_spacing=0.7, max_spacing=1, starting_spacing=2)
+        
+        aisles.append(Aisle(id=aisle_id, size=aisle_size, num_shelves=num_shelves, boxes=boxes))
+    situation_name, situation = build_default_situation(aisles, instruction)
+    problem_name = f"demo_{situation_name}_{situation_id}_1.json"
+    situations.append((problem_name, situation))
+    
+    # Small box near big boxes.
+    instruction = "a small box near big boxes"
+    big_sizes = [[shelf_height * 0.8, 0.1], [shelf_height * 0.5, 0.2]]
+    little_sizes = [[shelf_height * 0.4, 0.1], [shelf_height * 0.3, 0.1]]
+    aisles = []
+    for aisle_id in range(num_aisles):
+        boxes = []
+        if aisle_id == 0:
+            boxes += generate_many_boxes(aisle_size, shelf_height, 2, [big_sizes], num_boxes=1, min_spacing=1.5, max_spacing=2, starting_spacing=8)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [little_sizes], num_boxes=3, min_spacing=1.5, max_spacing=2, starting_spacing=7)
+        if aisle_id == 1:
+            boxes += generate_many_boxes(aisle_size, shelf_height, 0, [little_sizes], num_boxes=3, min_spacing=1.5, max_spacing=2, starting_spacing=1)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 1, [big_sizes], num_boxes=1, min_spacing=1.5, max_spacing=2, starting_spacing=3)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [little_sizes], num_boxes=1, min_spacing=1.5, max_spacing=2, starting_spacing=7)
+        if aisle_id == 2:
+            boxes += generate_many_boxes(aisle_size, shelf_height, 1, [little_sizes], num_boxes=2, min_spacing=1.5, max_spacing=2, starting_spacing=1)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 2, [big_sizes], num_boxes=1, min_spacing=1, max_spacing=1.5, starting_spacing=4)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [little_sizes], num_boxes=1, min_spacing=1.5, max_spacing=2, starting_spacing=11)
+        if aisle_id == 3:
+            boxes += [Box.initialize_random(id=None, pos=(0, 8), widths=big_sizes[0], heights=big_sizes[1])]
+            boxes += [Box.initialize_random(id="target", pos=(1, 8), widths=little_sizes[0], heights=little_sizes[1])]
+            boxes += generate_many_boxes(aisle_size, shelf_height, 1, [big_sizes], num_boxes=1, min_spacing=1, max_spacing=1.2, starting_spacing=10)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 2, [big_sizes], num_boxes=2, min_spacing=1, max_spacing=1.2, starting_spacing=4)
+        if aisle_id == 4:
+            boxes += generate_many_boxes(aisle_size, shelf_height, 1, [big_sizes, little_sizes], num_boxes=2, min_spacing=0.7, max_spacing=1, starting_spacing=5)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [big_sizes], num_boxes=2, min_spacing=0.7, max_spacing=1, starting_spacing=0.5)
+            boxes += [Box.initialize_random(id=None, pos=(3, 13), widths=little_sizes[0], heights=little_sizes[1])]
+                
+        if aisle_id == 5:
+            boxes += generate_many_boxes(aisle_size, shelf_height, 1, [big_sizes, little_sizes], num_boxes=2, min_spacing=6, max_spacing=8, starting_spacing=2)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 2, [big_sizes], num_boxes=2, min_spacing=0.5, max_spacing=1, starting_spacing=5)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [little_sizes], num_boxes=2, min_spacing=0.5, max_spacing=1, starting_spacing=2)
+        
+        aisles.append(Aisle(id=aisle_id, size=aisle_size, num_shelves=num_shelves, boxes=boxes))
+    situation_name, situation = build_default_situation(aisles, instruction)
+    problem_name = f"demo_{situation_name}_{situation_id}_2.json"
+    situations.append((problem_name, situation))
+    
+    # Big box between little boxes
+    instruction = "a short box near a big box and above tall boxes"
+    big_sizes = [[shelf_height * 0.8 , 0.1], [shelf_height * 0.7, 0.1]]
+    tall_sizes = [[shelf_height * 0.8, 0.1], [shelf_height * 0.2, 0.2]]
+    short_sizes = [[shelf_height * 0.5, 0.3], [shelf_height * 0.3, 0.1]]
+    aisles = []
+    for aisle_id in range(num_aisles):
+        boxes = []
+        if aisle_id == 0:
+            boxes += generate_many_boxes(aisle_size, shelf_height, 0, [big_sizes, short_sizes], num_boxes=2, min_spacing=0.4, max_spacing=1, starting_spacing=1)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 0, [tall_sizes], num_boxes=2, min_spacing=0.5, max_spacing=1, starting_spacing=10)
+        elif aisle_id == 1:
+            boxes = [
+            Box.initialize_random(id=None, pos=(3, 5), widths=little_sizes[0], heights=little_sizes[1]),
+            Box.initialize_random(id=None, pos=(3, 8), widths=little_sizes[0], heights=little_sizes[1]),]
+        elif aisle_id == 3:
+            boxes = [
+                Box.initialize_random(id=None, pos=(1, 2), widths=little_sizes[0], heights=little_sizes[1]),
+                Box.initialize_random(id="target", pos=(1, 5), widths=big_sizes[0], heights=big_sizes[1]),
+                Box.initialize_random(id=None, pos=(1, 10), widths=little_sizes[0], heights=little_sizes[1]),
+            ]
+        elif aisle_id == 4:
+            boxes = [
+                Box.initialize_random(id=None, pos=(1, 2), widths=little_sizes[0], heights=little_sizes[1]),
+                Box.initialize_random(id=None, pos=(1, 12), widths=little_sizes[0], heights=little_sizes[1]),
+            ]
+        elif aisle_id == 5:
+            boxes = [
+                Box.initialize_random(id=None, pos=(1, 12), widths=little_sizes[0], heights=little_sizes[1]),
+                Box.initialize_random(id=None, pos=(2, 8), widths=little_sizes[0], heights=little_sizes[1]),
+                Box.initialize_random(id=None, pos=(2, 12), widths=little_sizes[0], heights=little_sizes[1]),
+            ]
+            
+        aisles.append(Aisle(id=aisle_id, size=aisle_size, num_shelves=num_shelves, boxes=boxes))
+    situation_name, situation = build_default_situation(aisles, instruction)
+    problem_name = f"demo_{situation_name}_{situation_id}_4.json"
+    situations.append((problem_name, situation))
+    
+    # Big box between little boxes
+    instruction = "a big box between little boxes"
+    big_sizes = [[shelf_height * 0.8 , 0.1], [shelf_height * 0.4, 0.1]]
+    little_sizes = [[shelf_height * 0.4, 0.2], [shelf_height * 0.3, 0.2]]
+    aisles = []
+    for aisle_id in range(num_aisles):
+        boxes = []
+        if aisle_id == 0:
+            boxes = [
+            Box.initialize_random(id=None, pos=(3, 11), widths=little_sizes[0], heights=little_sizes[1]),
+            ]
+        elif aisle_id == 1:
+            boxes = [
+            Box.initialize_random(id=None, pos=(3, 5), widths=little_sizes[0], heights=little_sizes[1]),
+            Box.initialize_random(id=None, pos=(3, 8), widths=little_sizes[0], heights=little_sizes[1]),]
+        elif aisle_id == 3:
+            boxes = [
+                Box.initialize_random(id=None, pos=(1, 2), widths=little_sizes[0], heights=little_sizes[1]),
+                Box.initialize_random(id="target", pos=(1, 5), widths=big_sizes[0], heights=big_sizes[1]),
+                Box.initialize_random(id=None, pos=(1, 10), widths=little_sizes[0], heights=little_sizes[1]),
+            ]
+        elif aisle_id == 4:
+            boxes = [
+                Box.initialize_random(id=None, pos=(1, 2), widths=little_sizes[0], heights=little_sizes[1]),
+                Box.initialize_random(id=None, pos=(1, 12), widths=little_sizes[0], heights=little_sizes[1]),
+            ]
+        elif aisle_id == 5:
+            boxes = [
+                Box.initialize_random(id=None, pos=(1, 12), widths=little_sizes[0], heights=little_sizes[1]),
+                Box.initialize_random(id=None, pos=(2, 8), widths=little_sizes[0], heights=little_sizes[1]),
+                Box.initialize_random(id=None, pos=(2, 12), widths=little_sizes[0], heights=little_sizes[1]),
+            ]
+            
+        aisles.append(Aisle(id=aisle_id, size=aisle_size, num_shelves=num_shelves, boxes=boxes))
+    situation_name, situation = build_default_situation(aisles, instruction)
+    problem_name = f"demo_{situation_name}_{situation_id}_0.json"
+    situations.append((problem_name, situation))
+    
+    instruction = "a little box above big boxes and tall boxes"
+    big_sizes = [[shelf_height * 0.8 , 0.1], [shelf_height * 0.7, 0.1]]
+    tall_sizes = [[shelf_height * 0.2, 0.1], [shelf_height * 0.8, 0.2]]
+    short_sizes = [[shelf_height * 0.4, 0.2], [shelf_height * 0.3, 0.1]]
+    aisles = []
+    for aisle_id in range(num_aisles):
+        boxes = []
+        if aisle_id == 0:
+            boxes += generate_many_boxes(aisle_size, shelf_height, 0, [short_sizes], num_boxes=3, min_spacing=0.4, max_spacing=1, starting_spacing=5)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 1, [big_sizes, short_sizes], num_boxes=4, min_spacing=0.7, max_spacing=5, starting_spacing=0.5)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 2, [tall_sizes], num_boxes=1, min_spacing=0.7, max_spacing=5, starting_spacing=10)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [short_sizes], num_boxes=2, min_spacing=1, max_spacing=2, starting_spacing=5)
+        elif aisle_id == 1:
+                boxes += generate_many_boxes(aisle_size, shelf_height, 0, [short_sizes], num_boxes=2, min_spacing=0.4, max_spacing=1, starting_spacing=5)
+                boxes += generate_many_boxes(aisle_size, shelf_height, 1, [big_sizes, short_sizes], num_boxes=5, min_spacing=0.7, max_spacing=1, starting_spacing=0.5)
+                boxes += generate_many_boxes(aisle_size, shelf_height, 2, [big_sizes, short_sizes], num_boxes=3, min_spacing=0.7, max_spacing=1, starting_spacing=4)
+                boxes += generate_many_boxes(aisle_size, shelf_height, 3, [tall_sizes], num_boxes=2, min_spacing=1, max_spacing=2, starting_spacing=5)
+        elif aisle_id == 2:
+            boxes += [
+            Box.initialize_random(id="target", pos=(0, 4), widths=short_sizes[0], heights=short_sizes[1])]
+            boxes += generate_many_boxes(aisle_size, shelf_height, 2, [big_sizes, tall_sizes], num_boxes=3, min_spacing=0.7, max_spacing=1, starting_spacing=4)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [big_sizes, tall_sizes], num_boxes=4, min_spacing=1, max_spacing=2, starting_spacing=5)
+        elif aisle_id == 3:
+            boxes += generate_many_boxes(aisle_size, shelf_height, 0, [tall_sizes], num_boxes=1, min_spacing=0.4, max_spacing=1, starting_spacing=4)
+            boxes += [Box.initialize_random(id=None, pos=(1, 0.5), widths=big_sizes[0], heights=big_sizes[1]),
+            Box.initialize_random(id=None, pos=(1, 6), widths=short_sizes[0], heights=short_sizes[1]),
+            Box.initialize_random(id=None, pos=(1, 10), widths=big_sizes[0], heights=big_sizes[1]),]
+            boxes += generate_many_boxes(aisle_size, shelf_height, 2, [big_sizes, short_sizes], num_boxes=2, min_spacing=0.7, max_spacing=1, starting_spacing=4)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [tall_sizes], num_boxes=2, min_spacing=1, max_spacing=2, starting_spacing=5)
+        elif aisle_id == 4:
+                boxes += generate_many_boxes(aisle_size, shelf_height, 0, [big_sizes], num_boxes=1, min_spacing=0.4, max_spacing=1, starting_spacing=4)
+                boxes += [Box.initialize_random(id=None, pos=(1, 0.5), widths=big_sizes[0], heights=big_sizes[1]),
+                Box.initialize_random(id=None, pos=(1, 6), widths=short_sizes[0], heights=short_sizes[1]),
+                Box.initialize_random(id=None, pos=(1, 10), widths=big_sizes[0], heights=big_sizes[1]),]
+                boxes += generate_many_boxes(aisle_size, shelf_height, 2, [big_sizes, short_sizes], num_boxes=2, min_spacing=0.7, max_spacing=1, starting_spacing=4)
+                boxes += generate_many_boxes(aisle_size, shelf_height, 3, [tall_sizes], num_boxes=2, min_spacing=1, max_spacing=2, starting_spacing=5)
+        elif aisle_id == 5:
+            boxes += generate_many_boxes(aisle_size, shelf_height, 0, [short_sizes, big_sizes], num_boxes=2, min_spacing=0.4, max_spacing=8, starting_spacing=5)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 1, [big_sizes, short_sizes], num_boxes=4, min_spacing=0.7, max_spacing=5, starting_spacing=0.5)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 2, [tall_sizes], num_boxes=1, min_spacing=0.7, max_spacing=5, starting_spacing=10)
+            boxes += generate_many_boxes(aisle_size, shelf_height, 3, [short_sizes], num_boxes=2, min_spacing=1, max_spacing=2, starting_spacing=5)
+            
+        aisles.append(Aisle(id=aisle_id, size=aisle_size, num_shelves=num_shelves, boxes=boxes))
+    situation_name, situation = build_default_situation(aisles, instruction)
+    problem_name = f"demo_{situation_name}_{situation_id}_0.json"
+    situations.append((problem_name, situation))
     
     for situation_name, situation in situations:
         filename = os.path.join(flags["output_directory"], situation_name)
