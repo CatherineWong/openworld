@@ -6,17 +6,19 @@ MIN_BOX_SIZE = 0.1
 MIN_BOX_SPACING = 0.1
     
 class Box(object):
-    def __init__(self, id, pos, width, height):
+    def __init__(self, id, pos, width, height, aisle_id):
         self.id = id
         self.pos = pos # Pos is in (shelf_id, x_distance on shelf)
         self.width = width
         self.height = height
+        self.aisle_id = aisle_id
     def to_representation(self):
         return {
             "id" : int(self.id),
             "pos": (int(self.pos[0]), float(self.pos[1])),
             "width" : float(self.width),
-            "height" : float(self.height)
+            "height" : float(self.height),
+            "aisle_id" : int(self.aisle_id)
         }
         
     @staticmethod
@@ -24,7 +26,7 @@ class Box(object):
         rng = np.random.default_rng()
         box_width = sample_normal(rng, widths)
         box_height = sample_normal(rng, heights)
-        return Box(id, pos, box_width, box_height)
+        return Box(id, pos, box_width, box_height, aisle_id=None)
         
 class Aisle(object):
     def __init__(self, id, size, num_shelves, boxes):
@@ -38,6 +40,7 @@ class Aisle(object):
         for box in boxes:
             box.width = clamp_min_max(box.width, min=MIN_BOX_SIZE, max=self.size - MIN_BOX_SIZE)
             box.height = clamp_min_max(box.height, min=MIN_BOX_SIZE, max=shelf_height - MIN_BOX_SIZE)
+            box.aisle_id = self.id
         return boxes
     
     def to_representation(self):
@@ -96,7 +99,7 @@ class World(object):
                 shelf = np.random.choice(free_shelves, 1)[0]
                 box_x = (aisle_size - remaining_shelf_space[shelf]) + box_spacing
                 box_pos = (shelf, box_x)
-                boxes += [Box(id=None, pos=box_pos, width=box_width, height=box_height)]
+                boxes += [Box(id=None, pos=box_pos, width=box_width, height=box_height, aisle_id=None)]
                 remaining_shelf_space[shelf] -= (box_spacing + box_width)
             aisle.boxes = boxes
             generated_aisles += [aisle]
@@ -109,6 +112,7 @@ class World(object):
             aisle.boxes = sorted(aisle.boxes, key=lambda b: b.pos[0])
             for box in aisle.boxes:
                 box.id = box_id
+                box.aisle_id = aisle.id
                 box_id += 1
         self.aisles = generated_aisles
 

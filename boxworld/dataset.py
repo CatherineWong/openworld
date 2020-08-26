@@ -13,6 +13,7 @@ def build_default_situation(aisles, instruction):
             if box.id == "target":
                 target = box_id
             box.id = box_id
+            box.aisle_id = aisle.id
             box_id += 1
     situation = Situation(world=World(aisles), location=0, instruction=instruction, target=target, meaning=None)
     situation_name = "_".join(instruction.split())
